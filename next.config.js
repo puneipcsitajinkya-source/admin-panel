@@ -17,6 +17,15 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api-proxy/:path*',
+        destination: 'http://13.201.103.106/:path*',
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
+
