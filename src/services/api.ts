@@ -10,7 +10,7 @@ export const api = axios.create({
 export const getProducts = () => api.get('/products');
 export const getProduct = (id: string) => api.get(`/products/${id}`);
 export const createProduct = (data: object) => api.post('/products', data);
-export const updateProduct = (id: string, data: object) => api.put(`/products/${id}`, data);
+export const updateProduct = (id: string, data: object) => api.patch(`/products/${id}`, data);
 export const deleteProduct = (id: string) => api.delete(`/products/${id}`);
 export const getProductStats = () => api.get('/products/stats');
 
@@ -23,8 +23,8 @@ export const getOrderStats = () => api.get('/orders/stats');
 
 // Categories
 export const getCategories = () => api.get('/categories');
-export const createCategory = (data: { name: string; icon?: string; showOnApp?: boolean }) => api.post('/categories', data);
-export const updateCategory = (id: string, data: { name?: string; icon?: string; showOnApp?: boolean }) =>
+export const createCategory = (data: { name: string; icon?: string; showOnApp?: boolean; image?: string; sortOrder?: number }) => api.post('/categories', data);
+export const updateCategory = (id: string, data: { name?: string; icon?: string; showOnApp?: boolean; image?: string; sortOrder?: number }) =>
   api.patch(`/categories/${id}`, data);
 export const deleteCategory = (id: string) => api.delete(`/categories/${id}`);
 

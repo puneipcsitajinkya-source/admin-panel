@@ -11,6 +11,11 @@ interface Product {
   };
   description: string;
   price: number;
+  mrp: number;
+  discount: number;
+  unit: string;
+  inStock: boolean;
+  brand: string;
   image: string;
   category: string;
 }
@@ -21,7 +26,7 @@ interface Category {
   icon: string;
 }
 
-const emptyForm = { nameEn: '', nameMr: '', description: '', price: '', category: '', image: '' };
+const emptyForm = { nameEn: '', nameMr: '', description: '', price: '', mrp: '', discount: '0', unit: '1 pc', inStock: true, brand: '', category: '', image: '' };
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -70,6 +75,11 @@ export default function ProductsPage() {
       nameMr: product.name?.mr || '',
       description: product.description || '',
       price: String(product.price),
+      mrp: String(product.mrp || 0),
+      discount: String(product.discount || 0),
+      unit: product.unit || '1 pc',
+      brand: product.brand || '',
+      inStock: product.inStock !== undefined ? product.inStock : true,
       category: product.category || categories[0]?.name || 'Vegetables',
       image: product.image || '',
     });
@@ -93,6 +103,11 @@ export default function ProductsPage() {
       },
       description: form.description,
       price: Number(form.price),
+      mrp: Number(form.mrp),
+      discount: Number(form.discount),
+      unit: form.unit,
+      brand: form.brand,
+      inStock: form.inStock,
       category: form.category,
       image: form.image || undefined,
     };
@@ -156,7 +171,15 @@ export default function ProductsPage() {
                   <div className="product-card-name">
                     {product.name ? `${product.name.en} (${product.name.mr})` : 'N/A'}
                   </div>
-                  <div className="product-card-price">₹{product.price}</div>
+                  <div className="product-card-price">
+                    ₹{product.price}
+                    {product.mrp > product.price && (
+                      <span style={{ fontSize: 12, textDecoration: 'line-through', color: 'var(--text-muted)', marginLeft: 8 }}>₹{product.mrp}</span>
+                    )}
+                  </div>
+                  {!product.inStock && (
+                    <div style={{ color: 'var(--danger)', fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Out of Stock</div>
+                  )}
                   {product.description && (
                     <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12, lineHeight: 1.4 }}>
                       {product.description.slice(0, 60)}{product.description.length > 60 ? '...' : ''}
@@ -277,6 +300,65 @@ export default function ProductsPage() {
                       onChange={(e) => setForm({ ...form, price: e.target.value })}
                       required
                     />
+                  </div>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label">MRP (₹)</label>
+                    <input
+                      className="form-input"
+                      type="number"
+                      min="0"
+                      placeholder="e.g. 50"
+                      value={form.mrp}
+                      onChange={(e) => setForm({ ...form, mrp: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginTop: 12 }}>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label">Discount (%)</label>
+                    <input
+                      className="form-input"
+                      type="number"
+                      min="0"
+                      max="100"
+                      placeholder="e.g. 10"
+                      value={form.discount}
+                      onChange={(e) => setForm({ ...form, discount: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label">Unit</label>
+                    <input
+                      className="form-input"
+                      placeholder="e.g. 1 kg"
+                      value={form.unit}
+                      onChange={(e) => setForm({ ...form, unit: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label">Brand</label>
+                    <input
+                      className="form-input"
+                      placeholder="e.g. Amul"
+                      value={form.brand}
+                      onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label">In Stock?</label>
+                    <div style={{ display: 'flex', alignItems: 'center', height: '100%', gap: '8px', paddingLeft: '8px' }}>
+                      <input
+                        type="checkbox"
+                        checked={form.inStock}
+                        onChange={(e) => setForm({ ...form, inStock: e.target.checked })}
+                        style={{ width: '18px', height: '18px', accentColor: 'var(--accent)' }}
+                      />
+                      <span style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Yes, item is in stock</span>
+                    </div>
                   </div>
                   <div className="form-group" style={{ margin: 0 }}>
                     <label className="form-label">Category</label>

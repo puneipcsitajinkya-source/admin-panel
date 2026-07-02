@@ -9,11 +9,14 @@ interface Stats {
   delivered: number;
   confirmed: number;
   outForDelivery: number;
+  totalRevenue: number;
+  deliveredRevenue: number;
 }
 
 interface Order {
   _id: string;
   mobile: string;
+  customerName?: string;
   totalAmount: number;
   status: string;
   createdAt: string;
@@ -35,6 +38,8 @@ export default function DashboardPage() {
           delivered: orderRes.data.delivered,
           confirmed: orderRes.data.confirmed,
           outForDelivery: orderRes.data.outForDelivery,
+          totalRevenue: orderRes.data.totalRevenue || 0,
+          deliveredRevenue: orderRes.data.deliveredRevenue || 0,
         });
         setRecentOrders(ordersRes.data.slice(0, 8));
       })
@@ -78,6 +83,20 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="stat-card">
+                <div className="stat-icon green">💰</div>
+                <div className="stat-info">
+                  <div className="stat-label">Total Revenue</div>
+                  <div className="stat-value text-accent">₹{stats?.totalRevenue ?? 0}</div>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon green">🏆</div>
+                <div className="stat-info">
+                  <div className="stat-label">Delivered Rev.</div>
+                  <div className="stat-value text-accent">₹{stats?.deliveredRevenue ?? 0}</div>
+                </div>
+              </div>
+              <div className="stat-card">
                 <div className="stat-icon amber">⏳</div>
                 <div className="stat-info">
                   <div className="stat-label">Pending</div>
@@ -109,7 +128,7 @@ export default function DashboardPage() {
                   <thead>
                     <tr>
                       <th>Order ID</th>
-                      <th>Mobile</th>
+                      <th>Customer</th>
                       <th>Items</th>
                       <th>Total</th>
                       <th>Status</th>
@@ -127,7 +146,10 @@ export default function DashboardPage() {
                       recentOrders.map((order) => (
                         <tr key={order._id}>
                           <td style={{ fontFamily: 'monospace', fontSize: 12 }}>#{order._id.slice(-6).toUpperCase()}</td>
-                          <td>📱 {order.mobile}</td>
+                          <td>
+                            <div style={{ fontWeight: 600 }}>{order.customerName || 'Guest'}</div>
+                            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>📱 {order.mobile}</div>
+                          </td>
                           <td>{order.items.length} item(s)</td>
                           <td className="text-accent fw-bold">₹{order.totalAmount}</td>
                           <td>

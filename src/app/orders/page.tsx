@@ -14,6 +14,8 @@ interface Order {
   latitude: number;
   longitude: number;
   address?: string;
+  customerName?: string;
+  instructions?: string;
 }
 
 const STATUS_OPTIONS = [
@@ -61,9 +63,10 @@ export default function OrdersPage() {
 
   const handleShare = (order: Order) => {
     const text = `📦 Order #${order._id.slice(-6).toUpperCase()}
+👤 Customer: ${order.customerName || 'Guest'}
 📱 Mobile: ${order.mobile}
 🏠 Address: ${order.address || 'No Address Provided'}
-📍 Location: https://www.google.com/maps?q=${order.latitude},${order.longitude}`;
+📍 Location: https://www.google.com/maps?q=${order.latitude},${order.longitude}${order.instructions ? `\n📝 Instructions: ${order.instructions}` : ''}`;
     setShareOrder(order);
     setShareText(text);
   };
@@ -89,10 +92,10 @@ export default function OrdersPage() {
                 <thead>
                   <tr>
                     <th>Order ID</th>
-                    <th>Mobile</th>
+                    <th>Customer</th>
                     <th>Items</th>
                     <th>Total</th>
-                    <th>Location</th>
+                    <th>Delivery Details</th>
                     <th>Date</th>
                     <th>Status</th>
                   </tr>
@@ -105,7 +108,10 @@ export default function OrdersPage() {
                           #{order._id.slice(-6).toUpperCase()}
                         </Link>
                       </td>
-                      <td>📱 {order.mobile}</td>
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{order.customerName || 'Guest'}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>📱 {order.mobile}</div>
+                      </td>
                       <td>
                         {order.items.slice(0, 2).map((i, idx) => (
                           <div key={idx} style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -118,6 +124,11 @@ export default function OrdersPage() {
                       </td>
                       <td className="text-accent fw-bold">₹{order.totalAmount}</td>
                        <td>
+                        {order.instructions && (
+                          <div style={{ fontSize: 12, marginBottom: 4, color: 'var(--warning)', fontWeight: 600 }}>
+                            📝 {order.instructions}
+                          </div>
+                        )}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <a
                             href={`https://www.google.com/maps?q=${order.latitude},${order.longitude}`}

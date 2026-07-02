@@ -5,6 +5,9 @@ import Toast from '@/components/Toast';
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
+    storeName: 'Blinkit Clone',
+    deliveryTime: '10 mins',
+    minOrderAmount: 0,
     deliveryFeeEnabled: false,
     deliveryFee: 0,
     gstEnabled: false,
@@ -14,6 +17,7 @@ export default function SettingsPage() {
     freeDeliveryThresholdEnabled: false,
     freeDeliveryThreshold: 0,
     contactNumber: '9239321112',
+    defaultLanguage: 'en',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -23,6 +27,9 @@ export default function SettingsPage() {
     getSettings()
       .then((res) => {
         setSettings({
+          storeName: res.data.storeName || 'Blinkit Clone',
+          deliveryTime: res.data.deliveryTime || '10 mins',
+          minOrderAmount: res.data.minOrderAmount || 0,
           deliveryFeeEnabled: res.data.deliveryFeeEnabled || false,
           deliveryFee: res.data.deliveryFee || 0,
           gstEnabled: res.data.gstEnabled || false,
@@ -32,6 +39,7 @@ export default function SettingsPage() {
           freeDeliveryThresholdEnabled: res.data.freeDeliveryThresholdEnabled || false,
           freeDeliveryThreshold: res.data.freeDeliveryThreshold || 0,
           contactNumber: res.data.contactNumber || '9239321112',
+          defaultLanguage: res.data.defaultLanguage || 'en',
         });
       })
       .catch((err) => {
@@ -66,6 +74,46 @@ export default function SettingsPage() {
           <div className="loading-spinner"><div className="spinner" /></div>
         ) : (
           <form onSubmit={handleSave} style={{ maxWidth: 650 }}>
+            <div className="card" style={{ marginBottom: 24 }}>
+              <div className="card-header">
+                <div className="card-title">🏪 Store Information</div>
+              </div>
+              <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Store Name</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={settings.storeName}
+                    onChange={(e) => setSettings({ ...settings, storeName: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Delivery Time (Displayed on App)</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. 10 mins"
+                    value={settings.deliveryTime}
+                    onChange={(e) => setSettings({ ...settings, deliveryTime: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Minimum Order Amount (₹)</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    min="0"
+                    value={settings.minOrderAmount}
+                    onChange={(e) => setSettings({ ...settings, minOrderAmount: Number(e.target.value) })}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="card" style={{ marginBottom: 24 }}>
               <div className="card-header">
                 <div className="card-title">🚚 Delivery Fee Settings</div>
@@ -210,6 +258,36 @@ export default function SettingsPage() {
                     />
                   </div>
                 )}
+              </div>
+            </div>
+
+            <div className="card" style={{ marginBottom: 24 }}>
+              <div className="card-header">
+                <div className="card-title">🌐 Language Settings</div>
+              </div>
+              <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Default App Language</label>
+                  <select
+                    className="form-input"
+                    value={settings.defaultLanguage}
+                    onChange={(e) => setSettings({ ...settings, defaultLanguage: e.target.value })}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid var(--border)',
+                      backgroundColor: 'var(--bg-card)',
+                      color: 'var(--text-main)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    <option value="en">English</option>
+                    <option value="hi">हिंदी (Hindi)</option>
+                    <option value="mr">मराठी (Marathi)</option>
+                  </select>
+                </div>
               </div>
             </div>
 

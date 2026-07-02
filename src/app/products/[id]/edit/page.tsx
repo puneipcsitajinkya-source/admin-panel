@@ -14,6 +14,8 @@ export default function EditProductPage() {
     nameMr: '',
     description: '',
     price: '',
+    mrp: '',
+    discount: '',
     category: '',
     image: '',
   });
@@ -32,6 +34,8 @@ export default function EditProductPage() {
           nameMr: p.name?.mr || '',
           description: p.description || '',
           price: String(p.price),
+          mrp: p.mrp != null ? String(p.mrp) : '',
+          discount: p.discount != null ? String(p.discount) : '',
           category: p.category || catRes.data[0]?.name || '',
           image: p.image || '',
         });
@@ -54,6 +58,8 @@ export default function EditProductPage() {
         },
         description: form.description,
         price: Number(form.price),
+        mrp: Number(form.mrp),
+        discount: Number(form.discount),
         category: form.category,
         image: form.image || undefined,
       });
@@ -137,7 +143,29 @@ export default function EditProductPage() {
                     required
                   />
                 </div>
-
+                <div className="form-group">
+                  <label className="form-label">MRP (₹)</label>
+                  <input
+                    className="form-input"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={form.mrp}
+                    onChange={(e) => setForm({ ...form, mrp: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Discount (%)</label>
+                  <input
+                    className="form-input"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value={form.discount}
+                    onChange={(e) => setForm({ ...form, discount: e.target.value })}
+                  />
+                </div>
                 <div className="form-group">
                   <label className="form-label">Category</label>
                   <select

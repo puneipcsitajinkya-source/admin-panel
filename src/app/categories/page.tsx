@@ -7,6 +7,8 @@ interface Category {
   _id: string;
   name: string;
   icon: string;
+  image: string;
+  sortOrder: number;
   showOnApp: boolean;
 }
 
@@ -14,7 +16,7 @@ export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ name: '', icon: '🏷️', showOnApp: true });
+  const [form, setForm] = useState({ name: '', icon: '🏷️', image: '', sortOrder: 0, showOnApp: true });
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const load = () => {
@@ -51,9 +53,9 @@ export default function CategoriesPage() {
     }
     setSaving(true);
     try {
-      await createCategory({ name: form.name.trim(), icon: form.icon, showOnApp: form.showOnApp });
+      await createCategory({ name: form.name.trim(), icon: form.icon, image: form.image, sortOrder: Number(form.sortOrder), showOnApp: form.showOnApp });
       setToast({ message: '✅ Category added successfully!', type: 'success' });
-      setForm({ name: '', icon: '🏷️', showOnApp: true });
+      setForm({ name: '', icon: '🏷️', image: '', sortOrder: 0, showOnApp: true });
       load();
     } catch (err: any) {
       const errMsg = err?.response?.data?.message || 'Failed to create category';
@@ -110,6 +112,41 @@ export default function CategoriesPage() {
                 />
               </div>
 
+              <div className="form-group">
+                <label className="form-label">Sort Order</label>
+                <input
+                  className="form-input"
+                  type="number"
+                  placeholder="e.g. 1"
+                  value={form.sortOrder}
+                  onChange={(e) => setForm({ ...form, sortOrder: Number(e.target.value) })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">🖼️ Category Image URL</label>
+                <input
+                  className="form-input"
+                  type="url"
+                  placeholder="https://images.unsplash.com/photo-..."
+                  value={form.image}
+                  onChange={(e) => setForm({ ...form, image: e.target.value })}
+                />
+                {form.image && (
+                  <div style={{ marginTop: 10, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border)', height: 100 }}>
+                    <img
+                      src={form.image}
+                      alt="preview"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
+                  </div>
+                )}
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
+                  💡 Paste any public image URL (e.g., from Unsplash)
+                </div>
+              </div>
+
               <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '16px 0' }}>
                 <input
                   type="checkbox"
@@ -158,10 +195,16 @@ export default function CategoriesPage() {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <span style={{ fontSize: 24 }}>{c.icon}</span>
+                      {c.image ? (
+                        <img src={c.image} alt={c.name} style={{ width: 40, height: 40, borderRadius: 8, objectFit: 'cover' }} />
+                      ) : (
+                        <span style={{ fontSize: 24, width: 40, textAlign: 'center' }}>{c.icon}</span>
+                      )}
                       <div>
                         <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{c.name}</div>
-                        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>ID: {c._id}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                          ID: {c._id} &nbsp;|&nbsp; Sort Order: {c.sortOrder || 0}
+                        </div>
                       </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
